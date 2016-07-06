@@ -10,10 +10,10 @@
 #define PROG_ASM  "snake_asm.c"
 
 
-uint8_t MEM[65536] = {0};
+uint8_t memory[65536] = {0};
 
 // TODO: 填入原始二进制指令数据，解释模式需要
-// MEM[0x0600] = ...
+// memory[0x0600] = ...
 
 
 #define ADDR_SCREEN         0x200
@@ -26,15 +26,16 @@ uint8_t MEM[65536] = {0};
 #define CYCLE_PER_FRAME     10
 
 
-uint8_t GetMem(uint16_t addr) {
+// 存储读写
+uint8_t load(uint16_t addr) {
     if (addr == ADDR_RAND) {
         return rand();
     }
-    return MEM[addr];
+    return memory[addr];
 }
 
-void SetMem(uint16_t addr, uint8_t val) {
-    MEM[addr] = val;
+void store(uint16_t addr, uint8_t val) {
+    memory[addr] = val;
 }
 
 
@@ -113,7 +114,7 @@ void input() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_KEYDOWN) {
-            MEM[ADDR_INPUT] = event.key.keysym.sym;
+            memory[ADDR_INPUT] = event.key.keysym.sym;
         }
     }
 }
@@ -132,12 +133,12 @@ void output() {
     if (SDL_MUSTLOCK(screen)) {
         SDL_LockSurface(screen);
     }
-    uint32_t* mPixels = screen->pixels;
+    uint32_t* pixels = screen->pixels;
 
     // SDL_SetPaletteColors 用不了...
     for (int i = 0; i < SCREEN_W * SCREEN_H; i++) {
-        uint8_t index = MEM[ADDR_SCREEN + i];
-        mPixels[i] = PALETTE[index % 16];
+        uint8_t index = memory[ADDR_SCREEN + i];
+        pixels[i] = PALETTE[index % 16];
     }
 
     if (SDL_MUSTLOCK(screen)) {

@@ -3,6 +3,9 @@
  */
 #define STACK_BASE      0x100
 
+#define GetMem          load
+#define SetMem          store
+
 #define GetStack(M)     GetMem(M + STACK_BASE)
 #define SetStack(M, V)  SetMem(M + STACK_BASE, V)
 
